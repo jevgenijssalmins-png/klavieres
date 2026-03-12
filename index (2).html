@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IK Jevgeņijs Salmiņš — Klavieru un flīģeļu regulēšana un remonts</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #faf6ef;
+  --warm-white: #fdf9f4;
+  --ivory: #f5ede0;
+  --tan: #e8d5bc;
+  --brown-light: #c4a882;
+  --brown: #9b7b52;
+  --brown-dark: #6b4f2e;
+  --espresso: #3d2b1a;
+  --black-key: #1a1108;
+  --gold: #c9973a;
+  --gold-light: #e8c170;
+  --text: #2c1f0f;
+  --text-muted: #7a5c3a;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Lora', Georgia, serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+  background: rgba(250,246,239,0.96); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(196,168,130,0.3); transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 4px 30px rgba(61,43,26,0.12); }
+.nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 300; letter-spacing: 0.08em; color: var(--espresso); line-height: 1.3; }
+.nav-logo span { display: block; font-style: italic; color: var(--brown); font-size: 0.85rem; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { font-family: 'Lora', serif; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brown-dark); text-decoration: none; transition: color 0.2s; position: relative; }
+.nav-links a::after { content: ''; position: absolute; bottom: -3px; left: 0; right: 0; height: 1px; background: var(--gold); transform: scaleX(0); transition: transform 0.3s; }
+.nav-links a:hover { color: var(--gold); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+.hamburger span { width: 24px; height: 2px; background: var(--brown-dark); }
+
+.hero {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  background: linear-gradient(160deg, #fdf9f4 0%, #f5ede0 50%, #eddcc4 100%);
+  padding: 6rem 2rem 6rem;
+}
+.hero-circle-1 { position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(201,151,58,0.08) 0%, transparent 70%); top: -100px; right: -100px; animation: pulse 6s ease-in-out infinite; }
+.hero-circle-2 { position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(155,123,82,0.1) 0%, transparent 70%); bottom: 100px; left: -50px; animation: pulse 8s ease-in-out infinite 2s; }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.piano-keys { position: absolute; bottom: 0; left: 0; right: 0; height: 120px; display: flex; align-items: flex-end; justify-content: center; gap: 3px; opacity: 0.1; overflow: hidden; }
+.white-key { width: 32px; height: 110px; background: linear-gradient(180deg, #fff 0%, #e8d8c4 100%); border-radius: 0 0 6px 6px; border: 1px solid #c4a882; animation: keyFloat 4s ease-in-out infinite; }
+.black-key { width: 20px; height: 70px; background: #1a1108; border-radius: 0 0 4px 4px; margin: 0 -11px; z-index: 1; }
+@keyframes keyFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.hero-content { text-align: center; position: relative; z-index: 2; animation: fadeUp 1s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.hero-eyebrow { font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; animation: fadeUp 1s ease 0.2s both; }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 7vw, 5rem); font-weight: 400; line-height: 1.1; color: var(--espresso); margin-bottom: 1rem; animation: fadeUp 1s ease 0.3s both; }
+.hero h1 em { font-style: italic; color: var(--brown); display: block; }
+.hero-sub { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.1rem, 2.5vw, 1.4rem); font-weight: 300; font-style: italic; color: var(--brown); margin-bottom: 2.5rem; max-width: 560px; margin-left: auto; margin-right: auto; animation: fadeUp 1s ease 0.4s both; }
+.hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; animation: fadeUp 1s ease 0.5s both; }
+
+.btn-primary { padding: 0.9rem 2.2rem; background: var(--espresso); color: var(--ivory); text-decoration: none; font-family: 'Lora', serif; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; border-radius: 2px; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.6rem; border: 1px solid var(--espresso); }
+.btn-primary:hover { background: var(--gold); border-color: var(--gold); color: var(--espresso); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(61,43,26,0.2); }
+.btn-outline { padding: 0.9rem 2.2rem; background: transparent; color: var(--espresso); text-decoration: none; font-family: 'Lora', serif; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--brown); border-radius: 2px; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.6rem; }
+.btn-outline:hover { background: var(--brown-dark); border-color: var(--brown-dark); color: var(--ivory); transform: translateY(-2px); }
+
+section { padding: 6rem 2rem; }
+.container { max-width: 1100px; margin: 0 auto; }
+.section-label { font-family: 'Lora', serif; font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 1rem; }
+.section-label::after { content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--gold-light); }
+h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; color: var(--espresso); line-height: 1.2; margin-bottom: 1.5rem; }
+h2 em { font-style: italic; color: var(--brown); }
+.ornament { text-align: center; color: var(--gold-light); font-size: 1.2rem; margin: 0.5rem 0 2rem; letter-spacing: 0.5em; opacity: 0.6; }
+
+#about { background: var(--warm-white); }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+.about-text p { font-size: 1.02rem; line-height: 1.85; color: var(--text-muted); margin-bottom: 1.2rem; }
+.about-text strong { color: var(--espresso); font-weight: 600; }
+.clients-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1.5rem; }
+.client-tag { padding: 0.6rem 1rem; background: var(--ivory); border: 1px solid var(--tan); border-radius: 3px; font-size: 0.85rem; color: var(--brown-dark); display: flex; align-items: center; gap: 0.5rem; }
+.client-tag::before { content: '♪'; color: var(--gold); }
+.about-visual { display: flex; justify-content: center; }
+.piano-illustration { width: 100%; max-width: 380px; }
+
+#services { background: var(--cream); }
+.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+.service-card { background: var(--warm-white); border: 1px solid var(--tan); border-radius: 4px; padding: 2.2rem; transition: all 0.3s; position: relative; overflow: hidden; }
+.service-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--brown-light), var(--gold)); transform: scaleX(0); transform-origin: left; transition: transform 0.4s; }
+.service-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(61,43,26,0.1); border-color: var(--brown-light); }
+.service-card:hover::before { transform: scaleX(1); }
+.service-icon { font-size: 2rem; margin-bottom: 1.2rem; display: block; }
+.service-card h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; color: var(--espresso); margin-bottom: 0.8rem; }
+.service-card p { font-size: 0.92rem; line-height: 1.7; color: var(--text-muted); }
+
+#prices { background: var(--espresso); }
+#prices .section-label { color: var(--gold-light); }
+#prices .section-label::after { background: rgba(232,193,112,0.3); }
+#prices h2 { color: var(--ivory); }
+#prices h2 em { color: var(--gold-light); }
+.prices-intro { color: rgba(245,237,224,0.7); font-size: 1rem; max-width: 600px; margin-bottom: 3rem; line-height: 1.7; }
+.prices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+.price-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(196,168,130,0.25); border-radius: 4px; padding: 2rem; transition: all 0.3s; }
+.price-card:hover { background: rgba(255,255,255,0.1); border-color: rgba(201,151,58,0.5); transform: translateY(-3px); }
+.price-card h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--ivory); margin-bottom: 0.5rem; }
+.price-card .price-desc { font-size: 0.88rem; color: rgba(245,237,224,0.6); margin-bottom: 1.2rem; line-height: 1.6; }
+.price-amount { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold-light); font-weight: 600; }
+.price-amount span { font-family: 'Lora', serif; font-size: 0.9rem; color: rgba(245,237,224,0.5); font-weight: 400; }
+.price-note { margin-top: 2.5rem; padding: 1.5rem; background: rgba(201,151,58,0.1); border-left: 3px solid var(--gold); border-radius: 0 3px 3px 0; color: rgba(245,237,224,0.75); font-size: 0.88rem; font-style: italic; line-height: 1.6; }
+
+#shop { background: var(--ivory); }
+.shop-intro { font-size: 1.02rem; color: var(--text-muted); max-width: 600px; margin-bottom: 3rem; line-height: 1.7; }
+.piano-listings { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+.piano-card { background: var(--warm-white); border: 1px solid var(--tan); border-radius: 4px; overflow: hidden; transition: all 0.3s; }
+.piano-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(61,43,26,0.1); }
+.piano-card-img { height: 150px; background: linear-gradient(135deg, var(--tan) 0%, var(--brown-light) 100%); display: flex; align-items: center; justify-content: center; font-size: 3.5rem; }
+.piano-card-body { padding: 1.5rem; }
+.piano-card-body h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--espresso); margin-bottom: 0.5rem; }
+.piano-card-body p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+.piano-price { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--brown-dark); font-weight: 600; margin-bottom: 1rem; }
+.piano-status { display: inline-block; padding: 0.2rem 0.8rem; background: #e8f5e9; color: #2e7d32; font-size: 0.75rem; border-radius: 20px; margin-bottom: 0.8rem; }
+.shop-note { margin-top: 2rem; padding: 1.2rem 1.5rem; background: var(--warm-white); border: 1px solid var(--tan); border-radius: 4px; font-size: 0.9rem; color: var(--text-muted); font-style: italic; line-height: 1.7; }
+
+#contact { background: var(--warm-white); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start; margin-top: 3rem; }
+.contact-info h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--espresso); margin-bottom: 1.5rem; font-style: italic; }
+.contact-methods { display: flex; flex-direction: column; gap: 0.8rem; }
+.contact-method { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.1rem; background: var(--ivory); border: 1px solid var(--tan); border-radius: 3px; text-decoration: none; color: var(--text); transition: all 0.3s; }
+.contact-method:hover { border-color: var(--brown); background: var(--tan); transform: translateX(4px); }
+.contact-method-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.icon-phone { background: #fff3e0; }
+.icon-whatsapp { background: #e8f5e9; }
+.icon-telegram { background: #e3f2fd; }
+.icon-email { background: #fce4ec; }
+.contact-method-text strong { display: block; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.1rem; }
+.contact-method-text span { font-size: 1rem; color: var(--espresso); font-family: 'Playfair Display', serif; }
+.contact-note { margin-top: 1.5rem; font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; font-style: italic; }
+
+.contact-form { display: flex; flex-direction: column; gap: 1.1rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.form-group label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+.form-group input, .form-group textarea, .form-group select { padding: 0.8rem 1rem; background: var(--cream); border: 1px solid var(--tan); border-radius: 2px; font-family: 'Lora', serif; font-size: 0.95rem; color: var(--text); transition: border-color 0.2s, box-shadow 0.2s; outline: none; width: 100%; }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--brown); box-shadow: 0 0 0 3px rgba(155,123,82,0.12); }
+.form-group textarea { height: 120px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.btn-submit { padding: 1rem 2.5rem; background: var(--brown-dark); color: var(--ivory); border: none; border-radius: 2px; font-family: 'Lora', serif; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; }
+.btn-submit:hover { background: var(--gold); color: var(--espresso); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(61,43,26,0.2); }
+.form-success { display: none; padding: 1rem; background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 3px; color: #2e7d32; font-size: 0.92rem; text-align: center; margin-top: 0.5rem; }
+
+footer { background: var(--black-key); padding: 3rem 2rem; text-align: center; }
+.footer-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--ivory); margin-bottom: 0.5rem; }
+.footer-logo em { font-style: italic; color: var(--gold-light); }
+footer p { color: rgba(245,237,224,0.4); font-size: 0.82rem; margin-top: 0.4rem; }
+.footer-divider { width: 60px; height: 1px; background: rgba(201,151,58,0.3); margin: 1.5rem auto; }
+
+.reveal { opacity: 0; transform: translateY(25px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  nav { padding: 1rem; }
+  .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--cream); padding: 1.5rem; border-bottom: 1px solid var(--tan); gap: 1.2rem; }
+  .nav-links.open { display: flex; }
+  .hamburger { display: flex; }
+  .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .about-visual { display: none; }
+  .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .form-row { grid-template-columns: 1fr; }
+  section { padding: 4rem 1.5rem; }
+  .clients-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-logo">IK Jevgeņijs Salmiņš<span>Klavieru meistars</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">Par mani</a></li>
+    <li><a href="#services">Pakalpojumi</a></li>
+    <li><a href="#prices">Cenas</a></li>
+    <li><a href="#shop">Klavieres</a></li>
+    <li><a href="#contact">Kontakti</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-circle-1"></div>
+  <div class="hero-circle-2"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Profesionāls klavieru meistars · Latvija</p>
+    <h1>Klavieru un flīģeļu<em>regulēšana un remonts</em></h1>
+    <p class="hero-sub">Darba pieredze kopš 1987. gada. Uzticams partneris skolām, koncertzālēm un privātiem klientiem.</p>
+    <div class="hero-ctas">
+      <a href="tel:+37126576833" class="btn-primary">📞 Zvanīt</a>
+      <a href="https://wa.me/37126576833" class="btn-outline" target="_blank">💬 WhatsApp</a>
+    </div>
+  </div>
+  <div class="piano-keys">
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div><div class="black-key"></div>
+    <div class="white-key"></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text">
+        <p class="section-label reveal">Par mani</p>
+        <h2 class="reveal">Klavieru meistars <em>ar dvēseli</em></h2>
+        <div class="ornament reveal">— ♪ —</div>
+        <p class="reveal">Esmu <strong>Jevgeņijs Salmiņš</strong> — klavieru meistars ar vairāk nekā <strong>35 gadu pieredzi</strong> (kopš 1987. gada). Darba gaitas sāku <strong>Rīgas mūzikas instrumentu fabrikā (RMIF)</strong>, pēc tam 14 gadus strādāju <strong>Emīla Dārziņa mūzikas vidusskolā (EDMV)</strong>, kā arī 5 gadus profesionāli pilnveidojos <strong>Vācijā</strong>.</p>
+        <p class="reveal">Sniedzu pilnu pakalpojumu klāstu: <strong>profesionālu skaņošanu, mehānikas tīrīšanu un regulēšanu, intonēšanu</strong> un <strong>jebkuras sarežģītības remontdarbus</strong>, kā arī <strong>konsultācijas</strong>.</p>
+        <p class="reveal">Pakalpojumi pieejami <strong>organizācijām, skolām, kultūras iestādēm</strong> un <strong>privātpersonām</strong>. Apmaksa iespējama ar pārskaitījumu (e-rēķins vai naudas pieprasījums) vai skaidrā naudā.</p>
+        <div class="clients-grid reveal">
+          <div class="client-tag">Mūzikas skolas</div>
+          <div class="client-tag">Bērnudārzi</div>
+          <div class="client-tag">Kultūras iestādes</div>
+          <div class="client-tag">Koncertzāles</div>
+          <div class="client-tag">Privātie klienti</div>
+          <div class="client-tag">Teātri un klubi</div>
+        </div>
+      </div>
+      <div class="about-visual reveal">
+        <svg class="piano-illustration" viewBox="0 0 380 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="190" cy="285" rx="140" ry="15" fill="rgba(61,43,26,0.07)"/>
+          <path d="M60 100 Q80 60 180 55 Q300 50 320 120 L320 200 Q300 210 180 215 Q80 218 60 200 Z" fill="#1a1108" stroke="#3d2b1a" stroke-width="2"/>
+          <rect x="70" y="200" width="240" height="70" rx="4" fill="#2c1f0f" stroke="#3d2b1a" stroke-width="1.5"/>
+          <g transform="translate(80,205)">
+            <rect x="0" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="19" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="38" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="57" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="76" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="95" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="114" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="133" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="152" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="171" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="190" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="209" y="2" width="16" height="55" rx="2" fill="#f5ede0" stroke="#c4a882" stroke-width="0.8"/>
+            <rect x="11" y="2" width="11" height="34" rx="2" fill="#1a1108"/>
+            <rect x="30" y="2" width="11" height="34" rx="2" fill="#1a1108"/>
+            <rect x="68" y="2" width="11" height="34" rx="2" fill="#1a1108"/>
+            <rect x="87" y="2" width="11" height="34" rx="2" fill="#1a1108"/>
+            <rect x="106" y="2" width="11" height="34" rx="2" fill="#1a1108"/>
+            <rect x="144" y="2" width="11" height="34" rx="2" fill="#1a1108"/>
+            <rect x="163" y="2" width="11" height="34" rx="2" fill="#1a1108"/>
+            <rect x="201" y="2" width="11" height="34" rx="2" fill="#1a1108"/>
+            <rect x="220" y="2" width="11" height="34" rx="2" fill="#1a1108"/>
+          </g>
+          <rect x="90" y="268" width="14" height="22" rx="3" fill="#2c1f0f"/>
+          <rect x="275" y="268" width="14" height="22" rx="3" fill="#2c1f0f"/>
+          <path d="M70 200 L310 200" stroke="#c9973a" stroke-width="1.5" opacity="0.6"/>
+          <text x="325" y="115" font-size="22" fill="#c9973a" opacity="0.5">&#9834;</text>
+          <text x="40" y="155" font-size="18" fill="#c9973a" opacity="0.4">&#9835;</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="container">
+    <p class="section-label reveal">Pakalpojumi</p>
+    <h2 class="reveal">Ko es <em>piedāvāju</em></h2>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <span class="service-icon">&#127929;</span>
+        <h3>Profesionāla skaņošana</h3>
+        <p>Klavieru un flīģeļu precīza skaņošana līdz standarta A = 440 Hz. Garantēts rezultāts neatkarīgi no instrumenta vecuma.</p>
+      </div>
+      <div class="service-card reveal">
+        <span class="service-icon">&#129529;</span>
+        <h3>Mehānikas tīrīšana</h3>
+        <p>Pilnīga klavieru mehānisma tīrīšana — putekļu un nosēdumu noņemšana, kas atjauno instrumenta skaņu un darbību.</p>
+      </div>
+      <div class="service-card reveal">
+        <span class="service-icon">&#128295;</span>
+        <h3>Mehānikas regulēšana</h3>
+        <p>Klaviatūras mehānisma precīza regulēšana — taustiņu dziļums, pretestība, āmuru pozīcija optimālai spēlēšanas sajūtai.</p>
+      </div>
+      <div class="service-card reveal">
+        <span class="service-icon">&#127925;</span>
+        <h3>Intonēšana</h3>
+        <p>Āmuru filca korekcija labākai skaņas krāsai un izteiksmībai. Ļauj instrumentam atgūt oriģinālo, dzīvo skaņu.</p>
+      </div>
+      <div class="service-card reveal">
+        <span class="service-icon">&#128295;</span>
+        <h3>Remonts jebkuras sarežģītības</h3>
+        <p>No nelielas detaļas nomaiņas līdz pilnīgai mehānisma restaurācijai. 35+ gadu pieredze ar visiem instrumentu tipiem.</p>
+      </div>
+      <div class="service-card reveal">
+        <span class="service-icon">&#128172;</span>
+        <h3>Konsultācijas</h3>
+        <p>Palīdzu izvēlēties, novērtēt vai pirkt instrumentu. Sniedzu profesionālu viedokli par instrumenta stāvokli pirms iegādes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="prices">
+  <div class="container">
+    <p class="section-label reveal">Cenas</p>
+    <h2 class="reveal">Pakalpojumu <em>tarifi</em></h2>
+    <p class="prices-intro reveal">Cena ir atkarīga no konkrētajiem remontdarbiem. Sīkāka informācija pa tālruni. Apmaksa iespējama ar pārskaitījumu (e-rēķins vai naudas pieprasījums) vai skaidrā naudā.</p>
+    <div class="prices-grid">
+      <div class="price-card reveal">
+        <h3>Standarta skaņošana</h3>
+        <p class="price-desc">Klavieres standarta stāvoklī. Aptuveni 1–1.5 stundas.</p>
+        <div class="price-amount">no 50 <span>&#8364;</span></div>
+      </div>
+      <div class="price-card reveal">
+        <h3>Skaņošana + regulēšana</h3>
+        <p class="price-desc">Skaņošana un klaviatūras mehānisma regulēšana.</p>
+        <div class="price-amount">no 90 <span>&#8364;</span></div>
+      </div>
+      <div class="price-card reveal">
+        <h3>Flīģeļa skaņošana</h3>
+        <p class="price-desc">Pilna profesionāla flīģeļa skaņošana un regulēšana.</p>
+        <div class="price-amount">no 120 <span>&#8364;</span></div>
+      </div>
+      <div class="price-card reveal">
+        <h3>Remonts</h3>
+        <p class="price-desc">Pēc apskata un darba apjoma novērtēšanas. Individuāli.</p>
+        <div class="price-amount">pēc vienošanās</div>
+      </div>
+    </div>
+    <p class="price-note reveal">&#128161; Organizācijām iespējams noslēgt regulāras apkopes līgumu. Cenas var tikt pārskatītas — aktuālā informācija pa tālruni.</p>
+  </div>
+</section>
+
+<section id="shop">
+  <div class="container">
+    <p class="section-label reveal">Lietotu klavieru tirdzniecība</p>
+    <h2 class="reveal">Pārdodamie <em>instrumenti</em></h2>
+    <p class="shop-intro reveal">Regulāri piedāvāju pārbaudītas lietotas klavieres privātpersonām un iestādēm. Visi instrumenti ir tehniski pārbaudīti un noskaņoti pirms pārdošanas.</p>
+    <div class="piano-listings">
+      <div class="piano-card reveal">
+        <div class="piano-card-img">&#127929;</div>
+        <div class="piano-card-body">
+          <span class="piano-status">&#10003; Pieejama</span>
+          <h3>Pianīno — Schimmel</h3>
+          <p>Vācu ražojuma pianīno labā stāvoklī. Noskaņots, mehānisms pārbaudīts. Piemērots sākumskolas audzēkņiem.</p>
+          <div class="piano-price">1 200 &#8364;</div>
+          <a href="#contact" class="btn-outline" style="font-size:0.8rem; padding:0.6rem 1.2rem;">Interesē &#8594;</a>
+        </div>
+      </div>
+      <div class="piano-card reveal">
+        <div class="piano-card-img">&#127929;</div>
+        <div class="piano-card-body">
+          <span class="piano-status">&#10003; Pieejama</span>
+          <h3>Pianīno — Petrof</h3>
+          <p>Čehu ražojuma klasiskais pianīno. Ļoti labā stāvoklī, svaigi restaurēts, jauns sitamo mehānisms.</p>
+          <div class="piano-price">1 800 &#8364;</div>
+          <a href="#contact" class="btn-outline" style="font-size:0.8rem; padding:0.6rem 1.2rem;">Interesē &#8594;</a>
+        </div>
+      </div>
+      <div class="piano-card reveal">
+        <div class="piano-card-img">&#127932;</div>
+        <div class="piano-card-body">
+          <h3>Meklējat konkrētu instrumentu?</h3>
+          <p>Ja neredzat vajadzīgo — sazinieties. Bieži vien varu palīdzēt atrast piemērotu variantu.</p>
+          <a href="#contact" class="btn-primary" style="font-size:0.8rem; padding:0.6rem 1.2rem;">Jautāt &#8594;</a>
+        </div>
+      </div>
+    </div>
+    <p class="shop-note reveal">&#128204; Instrumentu pieejamība un cenas tiek regulāri atjauninātas. Zvaniet vai rakstiet, lai uzzinātu aktuālo piedāvājumu.</p>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="container">
+    <p class="section-label reveal">Kontakti</p>
+    <h2 class="reveal">Sazināties <em>ar mani</em></h2>
+    <div class="ornament reveal">— &#9834; —</div>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <h3>Labprāt atbildēšu uz jūsu jautājumiem</h3>
+        <div class="contact-methods">
+          <a href="tel:+37126576833" class="contact-method">
+            <div class="contact-method-icon icon-phone">&#128222;</div>
+            <div class="contact-method-text">
+              <strong>Telefons</strong>
+              <span>+371 265 76 833</span>
+            </div>
+          </a>
+          <a href="https://wa.me/37126576833" class="contact-method" target="_blank">
+            <div class="contact-method-icon icon-whatsapp">&#128172;</div>
+            <div class="contact-method-text">
+              <strong>WhatsApp</strong>
+              <span>+371 265 76 833</span>
+            </div>
+          </a>
+          <a href="https://t.me/+37126576833" class="contact-method" target="_blank">
+            <div class="contact-method-icon icon-telegram">&#9992;</div>
+            <div class="contact-method-text">
+              <strong>Telegram</strong>
+              <span>+371 265 76 833</span>
+            </div>
+          </a>
+          <a href="mailto:jsfirm@inbox.lv" class="contact-method">
+            <div class="contact-method-icon icon-email">&#9993;</div>
+            <div class="contact-method-text">
+              <strong>E-pasts</strong>
+              <span>jsfirm@inbox.lv</span>
+            </div>
+          </a>
+        </div>
+        <p class="contact-note">Atbildu uz zvaniem, WhatsApp un Telegram ziņām <strong style="color:var(--espresso); font-style:normal;">parasti dienas laikā</strong>.<br>Apmaksa: pārskaitījums (e-rēķins) vai skaidra nauda.</p>
+      </div>
+      <div class="reveal">
+        <form class="contact-form" id="contactForm" onsubmit="submitForm(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Vārds *</label>
+              <input type="text" placeholder="Jūsu vārds" required>
+            </div>
+            <div class="form-group">
+              <label>Tālrunis</label>
+              <input type="tel" placeholder="+371 ...">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>E-pasta adrese *</label>
+            <input type="email" placeholder="jums@epasts.lv" required>
+          </div>
+          <div class="form-group">
+            <label>Pakalpojuma veids</label>
+            <select>
+              <option value="">— Izvēlieties —</option>
+              <option>Klavieru skaņošana</option>
+              <option>Flīģeļa skaņošana</option>
+              <option>Mehānikas tīrīšana</option>
+              <option>Mehānikas regulēšana</option>
+              <option>Intonēšana</option>
+              <option>Remonts</option>
+              <option>Lietotas klavieres — pirkšana</option>
+              <option>Konsultācija</option>
+              <option>Cits jautājums</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Ziņojums *</label>
+            <textarea placeholder="Aprakstiet savu instrumentu un nepieciešamību..." required></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Nosūtīt ziņojumu &#8594;</button>
+          <div class="form-success" id="formSuccess">&#10003; Paldies! Jūsu ziņojums nosūtīts. Es atbildēšu tuvākajā laikā.</div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">IK Jevgeņijs <em>Salmiņš</em></div>
+  <p>Klavieru un flīģeļu meistars · Latvija</p>
+  <div class="footer-divider"></div>
+  <p>&#169; 2025 IK Jevgeņijs Salmiņš · Visas tiesības aizsargātas</p>
+</footer>
+
+<script>
+window.addEventListener('scroll', function() {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+document.querySelectorAll('.nav-links a').forEach(function(link) {
+  link.addEventListener('click', function() {
+    document.getElementById('navLinks').classList.remove('open');
+  });
+});
+
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(function(el) {
+  observer.observe(el);
+});
+
+function submitForm(e) {
+  e.preventDefault();
+  document.getElementById('formSuccess').style.display = 'block';
+  e.target.reset();
+  setTimeout(function() {
+    document.getElementById('formSuccess').style.display = 'none';
+  }, 5000);
+}
+</script>
+</body>
+</html>
